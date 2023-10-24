@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:PhoneFusion/screens/bottom_bar.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:PhoneFusion/consts/colors.dart';
@@ -7,6 +8,8 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_icons/flutter_icons.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
+import 'usermodel.dart';
+import 'databasehelper.dart';
 
 class SignUpScreen extends StatefulWidget {
   static const routeName = '/SignUpScreen';
@@ -33,13 +36,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
     if (isValid) {
       _formKey.currentState!.save();
+
+      final database = await DatabaseHelper.instance.database;
+
+      // Capture or obtain the image data (assuming _pickedImage is the image file path)
+      String imagePath = _pickedImage?.path ?? '';
+
+      // Create a User instance using the User model
+      User newUser = User(
+        id: 0, // The ID will be automatically assigned (auto-increment) in the database
+        name: _fullName,
+        email: _emailAddress,
+        password: _password,
+        phoneNumber: _phoneNumber,
+        profileImage: imagePath,
+      );
+
+      // Insert the user data into the database using the User instance
+       await database.insert('users', newUser.toMap());
+
+      // Display a success message and navigate to the home screen
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Registration successful!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Delay the navigation to the HomeScreen for a short period
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.of(context).pushReplacementNamed(BottomBarScreen.routeName);
+      });
     }
   }
+
+
   void _pickImageCamera() async{
     final picker=ImagePicker();
     final pickedImage=await picker.pickImage(source: ImageSource.camera);

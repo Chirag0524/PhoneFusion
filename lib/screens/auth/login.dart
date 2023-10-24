@@ -1,9 +1,13 @@
+import 'package:PhoneFusion/screens/bottom_bar.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:PhoneFusion/consts/colors.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_icons/flutter_icons.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
+import 'package:another_flushbar/flushbar.dart';
+
+import 'databasehelper.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/LoginScreen';
@@ -22,14 +26,72 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordFocusNode.dispose();
     super.dispose();
   }
+  void _showSuccessMessage() {
+    Flushbar(
+      message: 'Login successful!',
+      duration: const Duration(seconds: 2),
+      icon: const Icon(FeatherIcons.check, color: Colors.green),
+      backgroundColor: Colors.purpleAccent,
+    ).show(context).then((_) {
+      Navigator.of(context).pushReplacementNamed(BottomBarScreen.routeName);
+    });
+  }
 
-  void _submitForm() {
+  void _showErrorMessage() {
+    Flushbar(
+      message: 'Login failed. User not found.',
+      duration: const Duration(seconds: 2),
+      icon: const Icon(FeatherIcons.x, color: Colors.red),
+      backgroundColor: Colors.grey,
+    ).show(context);
+  }
+
+  void _submitForm() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
     if (isValid) {
       _formKey.currentState!.save();
+
+      final database = await DatabaseHelper.instance.database;
+      final users = await database.rawQuery(
+        'SELECT * FROM users WHERE email = ? AND password = ?',
+        [_emailAddress, _password],
+      );
+
+      if (users.isNotEmpty) {
+        // User found in the database, show a success message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Login successful!'),
+        //     duration: Duration(seconds: 2), // Adjust the duration as needed
+        //   ),
+        // );
+        //
+        // // Delay the navigation to the HomeScreen for a short period (2 seconds in this case)
+        // Future.delayed(Duration(seconds: 2), () {
+        //   Navigator.of(context).pushReplacementNamed(BottomBarScreen.routeName);
+        // });
+        _showSuccessMessage();
+        // Navigator.of(context).pushReplacementNamed(BottomBarScreen.routeName);
+      } else {
+        // User not found in the database, show an error message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('Login failed. User not found.'),
+        //     duration: Duration(seconds: 2),
+        //   ),
+        // );
+        _showErrorMessage();
+
+        // Clear the email and password fields
+        setState(() {
+          _emailAddress = '';
+          _password = '';
+        });
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +110,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                   durations: [19440, 10800],
                   heightPercentages: [0.20, 0.25],
-                  blur: MaskFilter.blur(BlurStyle.solid, 10),
+                  blur: const MaskFilter.blur(BlurStyle.solid, 10),
                   gradientBegin: Alignment.bottomLeft,
                   gradientEnd: Alignment.topRight,
                 ),
                 waveAmplitude: 0,
-                size: Size(
+                size: const Size(
                   double.infinity,
                   double.infinity,
                 ),
@@ -63,13 +125,13 @@ class _LoginScreenState extends State<LoginScreen> {
           Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 80),
+                margin: const EdgeInsets.only(top: 80),
                 height: 120.0,
                 width: 120.0,
                 decoration: BoxDecoration(
                   //  color: Theme.of(context).backgroundColor,
                   borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: NetworkImage(
                       'https://icons.iconarchive.com/icons/paomedia/small-n-flat/256/shop-icon.png',
                     ),
@@ -78,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   shape: BoxShape.rectangle,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Form(
@@ -88,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: TextFormField(
-                          key: ValueKey('email'),
+                          key: const ValueKey('email'),
                           validator: (value) {
                             if (value!.isEmpty || !value.contains('@')) {
                               return 'Please enter a valid email address';
@@ -102,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                               border: const UnderlineInputBorder(),
                               filled: true,
-                              prefixIcon: Icon(Icons.email),
+                              prefixIcon: const Icon(Icons.email),
                               labelText: 'Email Address',
                               fillColor: Theme.of(context).colorScheme.background),
                           onSaved: (value) {
@@ -113,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: TextFormField(
-                          key: ValueKey('Password'),
+                          key: const ValueKey('Password'),
                           validator: (value) {
                             if (value!.isEmpty || value.length < 7) {
                               return 'Please enter a valid Password';
@@ -125,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                               border: const UnderlineInputBorder(),
                               filled: true,
-                              prefixIcon: Icon(Icons.lock),
+                              prefixIcon: const Icon(Icons.lock),
                               suffixIcon: GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -148,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           ElevatedButton(
                               style: ButtonStyle(
                                   shape: MaterialStateProperty.all<
@@ -160,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               )),
                               onPressed: _submitForm,
-                              child: Row(
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
@@ -178,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   )
                                 ],
                               )),
-                          SizedBox(width: 20),
+                          const SizedBox(width: 20),
                         ],
                       ),
                     ],
