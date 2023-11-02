@@ -25,11 +25,11 @@ environment:
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
 # dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,6 +52,10 @@ dependencies:
   sqflite: ^2.3.0
   path: ^1.8.0
   another_flushbar: ^1.12.30
+  googleapis: ^11.4.0
+  googleapis_auth: ^1.4.1
+  google_sign_in: ^6.1.5
+  http: ^1.1.0
 
 
 

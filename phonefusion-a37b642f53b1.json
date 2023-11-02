@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "phonefusion",
+  "private_key_id": "a37b642f53b1105728144fffaf9915adc2ded874",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDOtKptr+L+8qGX\ng8bMBfIA9d58IXlxYakdadFL/2nnkp/VaZ2C1TkpbHeq5dgqCraxukXEvpbtiJEg\n7jrlYlZQX5K+hODV+3pV5m9lTH2oStJ2I11NvMA0PxvnK0QF/WI4P8FZBUA1WRj9\n9zJ9CG8zonNk5PAfxwVdvWZeDuPqZWtUaPEaUyBwtVN/3xjhaMcISBdB/WQ2xJMU\nKOJiJTp0lFuhk2VW5eH10Q4BgC7W93rZ4GCdyNi0zG6JwDvphWkO+mglz76sYflu\nWqHDJjonst6t1B9fHIuMJM4PPrHtpjZ40kScAUKSPLxSm5c1yvwnQJ8S266WQTrc\nvRQBABkHAgMBAAECggEABc8FPGCFSX16AFmp/CZtSYz0kUUY4OXKAdNCbWyiW5Pp\nkpli3Wqug4p9G7v/xMFY/EpBbFOgHCa1UAPsexu1/zuK/SLwyofu79EHmlokQdbF\nw/TJyhsexO5tE0708hIlG3Lh37rftgq97WJv9HGIkR6POEDyuoHg6w8dJvwreB+6\niweVBs9VuTdMUXVw7ZUqTwPoN6HIzCoAFaDbevl2sVMlYbBbR8sXPw9NEgyYPNIT\nsLfduCWbsb7hguaHI5OlsDlqIDu3ZF+Wq0dLC3QWicTzL9gMlZkavovglqTrhVL9\ndfYnS+kCOCZ7nvsdHh3vfLrxnYOrOz/seSDnoA584QKBgQDxibqQPOSGYDudYV5f\n3jK5A2kNunQTL5zxbWHAiRWTjRxUQXKWYx3IOAEDWGGVTP22rkyBniSw/V84eUQA\nkqNKsrnm6byISbJAr4qNUsqwl8uAagoJvKgDpAzwcejAx+gEYztdIFzj8K5fhBx0\ncbHEkAsZAC38/lTGRC8Ah/9jMQKBgQDbFQf7bgoHA3+pIgLqiorQ+JABBYVFowHJ\npMsl8uCfPfO8wMXPoF+oA8t7k4cXX309aSAok5bVMPnBYJe/y9DYXcRHXXVDQQzN\nbd8ARaorMqgUtracVSpk1VV45x9t5KoGBtDhLC6Fq1PrdBZ/fw1dNvVBbwfZrzVg\n8VOLBZ0BtwKBgQDFC+BIdXTVb0KTJPER8rqclvyoN3kkgc5eYybBJNSWWCNJVU8/\nAsM0KQQij4Kkg3fkBZPilnpGbZ21+7APa5GNifsBN6QX509lWBAHNQioQl3BeECS\nKvdCaR4pNjR0uWE92xp94b4GMr5+q89u66XjvsNe9PePkojkapGRtGETsQKBgQDE\nNc7DUWcrpueDy9E+y7vNsoAOWiplFru4I55Jq3+fPvX3e9LtxB1HtbZdQ+B+f2gE\nQw2pKZ2x7D4TAfaGsPynezsaC0rFZBIaPie1766bJ7A/dPCRjPj9+86kDKMqYdwg\nr6QNtusnji0HuB2aLGkErf7zjoRCYtf0rc37uZhHewKBgBctbPJcHqMzre6aBXMK\nrosdglhAKozEMhkgSw0KWUBQAtR+YDxb5DM3pVWxLOMUIGQJ9sF2P0eAJfuiNRJo\nzycEncUtocZFwRnke8YVc/XZ0aiuSfcubcfk/qFH42FeJvc3NlV+GxdXNWOWqKBh\nQm5iaeH2gJ9bpRF3IHmrv6fl\n-----END PRIVATE KEY-----\n",
+  "client_email": "phonefusion@phonefusion.iam.gserviceaccount.com",
+  "client_id": "108255245001188519045",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/phonefusion%40phonefusion.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

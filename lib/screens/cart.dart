@@ -1,3 +1,4 @@
+import 'package:PhoneFusion/screens/checkout1.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:PhoneFusion/consts/colors.dart';
@@ -77,7 +78,7 @@ Widget checkOutSection(BuildContext context,double subtotal){
                   child: InkWell(
                     borderRadius: BorderRadius.circular(30),
                     onTap: (){
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      Navigator.pushNamed(context, CheckoutScreen.routeName);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),

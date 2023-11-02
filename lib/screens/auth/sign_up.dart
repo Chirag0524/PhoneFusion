@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:PhoneFusion/screens/auth/login.dart';
 import 'package:PhoneFusion/screens/bottom_bar.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,8 +9,12 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_icons/flutter_icons.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
-import 'usermodel.dart';
-import 'databasehelper.dart';
+// import 'usermodel.dart';
+// import 'databasehelper.dart';
+import 'package:googleapis/sheets/v4.dart';
+import 'package:googleapis_auth/auth_io.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:http/http.dart' as http;
 
 class SignUpScreen extends StatefulWidget {
   static const routeName = '/SignUpScreen';
@@ -22,12 +27,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _phoneNumberFocusNode = FocusNode();
   bool _obscureText = true;
-  String _emailAddress = '';
-  String _password = '';
-  String _fullName = '';
-  late int _phoneNumber;
+  // String _emailAddress = '';
+  // String _password = '';
+  // String _fullName = '';
+  // late int _phoneNumber;
    File? _pickedImage;
   final _formKey = GlobalKey<FormState>();
+  // final _googleSignIn = GoogleSignIn(scopes: ['https://www.googleapis.com/auth/spreadsheets']);
+  // final _credentialsFile = 'phonefusion-a37b642f53b1.json';
+  // final _spreadsheetId = '1GYd9GXEXLL2ROa-Utwzy1FjDd2zKTlAHNVShpaWs5aU';
+  // final _range = 'User_details';
+
+  // Define and initialize text controllers
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
   @override
   void dispose() {
     _passwordFocusNode.dispose();
@@ -36,45 +51,93 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _submitForm() async {
-    final isValid = _formKey.currentState!.validate();
-    FocusScope.of(context).unfocus();
-    if (isValid) {
-      _formKey.currentState!.save();
+  Future<void> signUp() async {
+    final name = nameController.text;
+    final email = emailController.text;
+    final password = passwordController.text;
+    final mobile = mobileController.text;
 
-      final database = await DatabaseHelper.instance.database;
+    // Initialize Google Sheets API credentials and service
+    final _credentials = ServiceAccountCredentials.fromJson({
+      "type": "service_account",
+      "project_id": "phonefusion",
+      "private_key_id": "a37b642f53b1105728144fffaf9915adc2ded874",
+      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDOtKptr+L+8qGX\ng8bMBfIA9d58IXlxYakdadFL/2nnkp/VaZ2C1TkpbHeq5dgqCraxukXEvpbtiJEg\n7jrlYlZQX5K+hODV+3pV5m9lTH2oStJ2I11NvMA0PxvnK0QF/WI4P8FZBUA1WRj9\n9zJ9CG8zonNk5PAfxwVdvWZeDuPqZWtUaPEaUyBwtVN/3xjhaMcISBdB/WQ2xJMU\nKOJiJTp0lFuhk2VW5eH10Q4BgC7W93rZ4GCdyNi0zG6JwDvphWkO+mglz76sYflu\nWqHDJjonst6t1B9fHIuMJM4PPrHtpjZ40kScAUKSPLxSm5c1yvwnQJ8S266WQTrc\nvRQBABkHAgMBAAECggEABc8FPGCFSX16AFmp/CZtSYz0kUUY4OXKAdNCbWyiW5Pp\nkpli3Wqug4p9G7v/xMFY/EpBbFOgHCa1UAPsexu1/zuK/SLwyofu79EHmlokQdbF\nw/TJyhsexO5tE0708hIlG3Lh37rftgq97WJv9HGIkR6POEDyuoHg6w8dJvwreB+6\niweVBs9VuTdMUXVw7ZUqTwPoN6HIzCoAFaDbevl2sVMlYbBbR8sXPw9NEgyYPNIT\nsLfduCWbsb7hguaHI5OlsDlqIDu3ZF+Wq0dLC3QWicTzL9gMlZkavovglqTrhVL9\ndfYnS+kCOCZ7nvsdHh3vfLrxnYOrOz/seSDnoA584QKBgQDxibqQPOSGYDudYV5f\n3jK5A2kNunQTL5zxbWHAiRWTjRxUQXKWYx3IOAEDWGGVTP22rkyBniSw/V84eUQA\nkqNKsrnm6byISbJAr4qNUsqwl8uAagoJvKgDpAzwcejAx+gEYztdIFzj8K5fhBx0\ncbHEkAsZAC38/lTGRC8Ah/9jMQKBgQDbFQf7bgoHA3+pIgLqiorQ+JABBYVFowHJ\npMsl8uCfPfO8wMXPoF+oA8t7k4cXX309aSAok5bVMPnBYJe/y9DYXcRHXXVDQQzN\nbd8ARaorMqgUtracVSpk1VV45x9t5KoGBtDhLC6Fq1PrdBZ/fw1dNvVBbwfZrzVg\n8VOLBZ0BtwKBgQDFC+BIdXTVb0KTJPER8rqclvyoN3kkgc5eYybBJNSWWCNJVU8/\nAsM0KQQij4Kkg3fkBZPilnpGbZ21+7APa5GNifsBN6QX509lWBAHNQioQl3BeECS\nKvdCaR4pNjR0uWE92xp94b4GMr5+q89u66XjvsNe9PePkojkapGRtGETsQKBgQDE\nNc7DUWcrpueDy9E+y7vNsoAOWiplFru4I55Jq3+fPvX3e9LtxB1HtbZdQ+B+f2gE\nQw2pKZ2x7D4TAfaGsPynezsaC0rFZBIaPie1766bJ7A/dPCRjPj9+86kDKMqYdwg\nr6QNtusnji0HuB2aLGkErf7zjoRCYtf0rc37uZhHewKBgBctbPJcHqMzre6aBXMK\nrosdglhAKozEMhkgSw0KWUBQAtR+YDxb5DM3pVWxLOMUIGQJ9sF2P0eAJfuiNRJo\nzycEncUtocZFwRnke8YVc/XZ0aiuSfcubcfk/qFH42FeJvc3NlV+GxdXNWOWqKBh\nQm5iaeH2gJ9bpRF3IHmrv6fl\n-----END PRIVATE KEY-----\n",
+      "client_email": "phonefusion@phonefusion.iam.gserviceaccount.com",
+      "client_id": "108255245001188519045",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://oauth2.googleapis.com/token",
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/phonefusion%40phonefusion.iam.gserviceaccount.com",
+      "universe_domain": "googleapis.com"
+    });
 
-      // Capture or obtain the image data (assuming _pickedImage is the image file path)
-      String imagePath = _pickedImage?.path ?? '';
+    // Create a client and access Google Sheets
+    final client = await clientViaServiceAccount(_credentials, ['https://www.googleapis.com/auth/spreadsheets']);
+    final sheets = SheetsApi(client);
+    final spreadsheetId = '1GYd9GXEXLL2ROa-Utwzy1FjDd2zKTlAHNVShpaWs5aU'; // Replace with your spreadsheet ID
+    final range = 'User_details'; // Replace with your sheet name
 
-      // Create a User instance using the User model
-      User newUser = User(
-        id: 0, // The ID will be automatically assigned (auto-increment) in the database
-        name: _fullName,
-        email: _emailAddress,
-        password: _password,
-        phoneNumber: _phoneNumber,
-        profileImage: imagePath,
-      );
+    // Fetch the existing data from Google Sheets
+    final response = await sheets.spreadsheets.values.get(spreadsheetId, range);
+    final values = response.values;
 
-      // Insert the user data into the database using the User instance
-       await database.insert('users', newUser.toMap());
+    // Check if the email already exists
+    bool emailExists = false;
+    if (values != null) {
+      for (final row in values) {
+        if (row.length >= 2 && row[1] == email) {
+          emailExists = true;
+          break;
+        }
+      }
+    }
 
-      // Display a success message and navigate to the home screen
+    if (emailExists) {
+      // User with the same email is already registered; show a message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Registration successful!'),
+          content: Text('User with this email is already registered!'),
+          duration: Duration(seconds: 2),
+        ),
+
+      );
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.pushNamed(context, LoginScreen.routeName);
+      });
+    } else {
+      // User is not registered; proceed to add data
+      final data = [
+        [name, email, password, mobile],
+      ];
+      final valueRange = ValueRange(values: data);
+
+      // Push the data to Google Sheets
+      await sheets.spreadsheets.values.append(valueRange, spreadsheetId, range, valueInputOption: 'RAW');
+
+      // Clear text fields after sign-up
+      nameController.clear();
+      emailController.clear();
+      passwordController.clear();
+      mobileController.clear();
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Registration successful, and data pushed to Google Sheets!'),
           duration: Duration(seconds: 2),
         ),
       );
 
-      // Delay the navigation to the HomeScreen for a short period
+      // Navigate to the desired screen
       Future.delayed(Duration(seconds: 2), () {
-        Navigator.of(context).pushReplacementNamed(BottomBarScreen.routeName);
+        Navigator.pushNamed(context, BottomBarScreen.routeName);
       });
     }
-  }
 
+    // Close the client
+    client.close();
+  }
 
   void _pickImageCamera() async{
     final picker=ImagePicker();
@@ -175,7 +238,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             splashColor: Colors.purpleAccent,
                                               child:  Row(
                                                 children: [
-                                                  const Padding(
+                                                   Container(
                                                     padding: EdgeInsets.all(8.0),
                                                     child: Icon(Icons.camera,color: Colors.purpleAccent,
                                                     ),
@@ -196,7 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           splashColor: Colors.purpleAccent,
                                           child:  Row(
                                             children: [
-                                              const Padding(
+                                               Container(
                                                 padding: EdgeInsets.all(8.0),
                                                 child: Icon(Icons.image,color: Colors.purpleAccent,
                                                 ),
@@ -215,9 +278,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         InkWell(
                                           onTap: _remove,
                                           splashColor: Colors.purpleAccent,
-                                          child:  const Row(
+                                          child:   Row(
                                             children: [
-                                              Padding(
+                                               Container(
                                                 padding: EdgeInsets.all(8.0),
                                                 child: Icon(Icons.remove_circle,color: Colors.red,
                                                 ),
@@ -248,9 +311,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         key: _formKey,
                         child: Column(
                           children: [
-                            Padding(
+                            Container(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
+                                controller: nameController,
                                 key: const ValueKey('name'),
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -269,13 +333,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     labelText: 'Full name',
                                     fillColor: Theme.of(context).colorScheme.background),
                                 onSaved: (value) {
-                                  _fullName = value!;
+                                  nameController = TextEditingController(text: value);
                                 },
                               ),
                             ),
-                            Padding(
+                            Container(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
+                                controller: emailController,
                                 key: const ValueKey('email'),
                                 focusNode: _emailFocusNode,
                                 validator: (value) {
@@ -295,13 +360,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     labelText: 'Email Address',
                                     fillColor: Theme.of(context).colorScheme.background),
                                 onSaved: (value) {
-                                  _emailAddress = value!;
+                                  emailController = TextEditingController(text: value);
                                 },
                               ),
                             ),
-                            Padding(
+                            Container(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
+                                controller: passwordController,
                                 key: const ValueKey('Password'),
                                 validator: (value) {
                                   if (value!.isEmpty || value.length < 7) {
@@ -328,16 +394,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     labelText: 'Password',
                                     fillColor: Theme.of(context).colorScheme.background),
                                 onSaved: (value) {
-                                  _password = value!;
+                                  passwordController = TextEditingController(text: value);
                                 },
                                 obscureText: _obscureText,
                                 onEditingComplete: () => FocusScope.of(context)
                                     .requestFocus(_phoneNumberFocusNode),
                               ),
                             ),
-                            Padding(
+                            Container(
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
+                                controller: mobileController,
                                 key: const ValueKey('phone number'),
 
                                 focusNode: _phoneNumberFocusNode,
@@ -348,7 +415,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   return null;
                                 },
                                 textInputAction: TextInputAction.next,
-                                onEditingComplete: _submitForm,
+                                onEditingComplete: signUp,
                                 keyboardType: TextInputType.phone,
                                 decoration: InputDecoration(
                                     border: const UnderlineInputBorder(),
@@ -357,7 +424,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     labelText: 'Phone number',
                                     fillColor: Theme.of(context).colorScheme.background),
                                 onSaved: (value) {
-                                  _phoneNumber = int.parse(value!);
+                                  mobileController = TextEditingController(text: value);;
                                 },
                               ),
                             ),
@@ -375,7 +442,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             color: ColorsConsts.backgroundColor),
                                       ),
                                     )),
-                                    onPressed: _submitForm,
+                                    onPressed: signUp,
                                     child: const Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [

@@ -37,4 +37,9 @@ class DatabaseHelper {
       },
     );
   }
+  Future<bool> isUserLoggedIn() async {
+    final db = await database;
+    final result = await db.rawQuery("SELECT * FROM users WHERE is_logged_in = 1");
+    return result.isNotEmpty;
+  }
 }

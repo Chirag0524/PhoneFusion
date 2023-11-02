@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "208594532771",
+    "project_id": "phone-fusion",
+    "storage_bucket": "phone-fusion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208594532771:android:20bfaebfed2ccf2d8c0216",
+        "android_client_info": {
+          "package_name": "com.example.untitled1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApMRIyXpWsRl0NXe7c16FK0usa_SC8Uh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

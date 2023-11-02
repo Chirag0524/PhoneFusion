@@ -1,3 +1,5 @@
+import 'package:PhoneFusion/screens/checkout1.dart';
+// import 'package:PhoneFusion/screens/confirmorder.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:PhoneFusion/inner_screens/brand_navigation_rail.dart';
@@ -79,6 +81,7 @@ class _MyAppState extends State<MyApp> {
             "/LoginScreen":(context)=>LoginScreen(),
             "/SignUpScreen":(context)=>SignUpScreen(),
             "/BottomBarScreen":(context)=>BottomBarScreen(),
+            "/CheckoutScreen":(context)=>CheckoutScreen(),
             // Add other routes if needed
           },
         );
